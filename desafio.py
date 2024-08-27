@@ -16,7 +16,7 @@ extrato = ""
 numero_saques = 0
 LIMITE_SAQUES = 3
 
-# Funções
+# Verificações
 while True:
 
     opcao = input(menu)

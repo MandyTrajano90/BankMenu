@@ -8,8 +8,7 @@ def menu():
         [4] Nova Conta
         [5] Listar Contas
         [6] Novo Cliente
-        [7] Filtrar Cliente
-        [8] Sair 
+        [7] Sair 
 
     ****************************
 
@@ -41,25 +40,68 @@ def sacar(saldo, valor, extrato, limite, numero_saques, limite_saques):
         print(f"Saque de R${valor:.2f} realizado com sucesso.")
     return saldo, extrato
 
-def exibir_extrato():
 
-def criar_cliente():
+def exibir_extrato(saldo, /, *,  extrato):
+    print("##### EXTRATO #####")
+    print("Não foram realizadas movimentações." if not extrato else extrato)
+    print(f"Saldo: R${saldo:.2f}\n")
+    print("###################")
 
-def filtrar_cliente():
 
-def criar_conta():  
+def novo_cliente(cliente):
+    cpf = input("Digite o CPF (somente número): ")
+    cliente = filtrar_cliente(cpf, clientes)
+
+    if cliente:
+        print("Cliente já cadastrado!")
+        return 
+
+    nome = input("Digite o nome completo: ")
+    data_nascimento = input("Digite a data de nascimento (dd-mm-aaaa): ")
+    endereco = input("Digite o endereço: ")
+    cliente = {"nome": nome, "cpf": cpf, "data_nascimento": data_nascimento, "endereco": endereco}
+    clientes.append(cliente)
+    print("Cliente cadastrado com sucesso!")
+    
+
+def filtrar_cliente(cpf, clientes):
+    for cliente in clientes:
+        if cliente["cpf"] == cpf:
+            return cliente
+    return None
 
 
-def listar_contas():
+def criar_conta(agencia, numero_conta, clientes):
+    cpf = input("Digite o CPF do cliente (somente número): ")
+    cliente = filtrar_cliente(cpf, clientes)
+    if cliente:
+        print("Conta criada com sucesso!")
+        return {"agencia": agencia, "numero_conta": numero_conta, "cliente": cliente}
+
+    print("Cliente não encontrado.")
+
+
+def listar_contas(contas):
+    for conta in contas:
+        print(f"Agência: {conta['agencia']}")
+        print(f"Número da conta: {conta['numero_conta']}")
+        print(f"Cliente: {conta['cliente']['nome']}")
+        print("-------------------------------")
+
+def sair():
+    print("Saindo...")
 
 
 def main():
+    print("Bem-vindo ao Banco DevPro!")
+    print("O que deseja fazer?")
 saldo = 0
 limite = 500
 limite_diario = 1500
 extrato = ""
 numero_saques = 0
 LIMITE_SAQUES = 3
+AGENCIA = '0001'
 clientes = []
 contas = []
 
@@ -74,25 +116,27 @@ while True:
     
     elif opcao == "2":
             valor = float(input("Digite o valor a ser sacado: R$"))
-            if valor > limite:
-                print("Valor maior que o limite.")
-            elif valor > saldo:
-                print("Saldo insuficiente.")
-            elif numero_saques >= LIMITE_SAQUES:
-                print("Limite de saques diários atingido.")
-            else:
-                saldo -= valor
-                extrato += f"Saque: R${valor:.2f}\n"
-                numero_saques += 1
+            saldo, extrato = sacar(saldo, valor, extrato, limite, numero_saques, LIMITE_SAQUES)
 
     elif opcao == "3":
-        print("##### EXTRATO #####")
-        print("Não foram realizadas movimentações." if not extrato else extrato)
-        print(f"Saldo: R${saldo:.2f}\n")
-        print("###################")
-    
+        exibir_extrato(saldo, extrato=extrato)
+
+
     elif opcao == "4":
-        print("Saindo...")
+        numero_conta = len(contas) + 1
+        conta = criar_conta(AGENCIA, numero_conta, clientes)
+
+        if conta:
+            contas.append(conta)
+    
+    elif opcao == "5":
+        listar_contas(contas)
+    
+    elif opcao == "6":
+        novo_cliente(clientes)
+
+    elif opcao == "7":
+        sair()
         break
     
     else:
